@@ -1,6 +1,6 @@
-"use client";
-import TextAnalyser from "@/src/components/TextAnalyser";
+
 import Image from "next/image";
+import TextAnalyser from "../components/TextAnalyser";
 
 export default function Home() {
 	return (
