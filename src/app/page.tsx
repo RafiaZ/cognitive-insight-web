@@ -1,6 +1,5 @@
 
-import Image from "next/image";
-import TextAnalyser from "../components/TextAnalyser";
+import TextAnalyser from "@/components/TextAnalyser";
 
 export default function Home() {
 	return (

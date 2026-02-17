@@ -25,18 +25,28 @@ export default function TextAnalyser() {
 	const [inputText, setInputText] = useState<string>("");
     const [result, setResult] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
+	const [error, setError] = useState("");
 
     const handleTextAnalyser = () =>{
-        if (inputText.trim() === "") {
-            alert("Please enter some text to analyze.");
+        if (inputText.trim().length < 20) {
+            setError("Please enter at least 20 characters to analyze.");
             return;
         }
 
-       
-        setTimeout(() => {
-            setResult(`Text Length: ${inputText.length} characters`);
-             setLoading(false);
-        }, 1500)
+        setError("");
+        setLoading(true);
+        setResult("");
+     
+		try{
+			const res = await fetch("/api/analyze",{
+				    method: "POST",
+					headers: { "Content-Type": "application/json" },
+				 
+				 body: JSON.stringify({ text: inputText })
+		}
+		catch (err) {
+			setError("An error occurred while analyzing the text. Please try again.");
+		}
     }
 	return (
 		<>
