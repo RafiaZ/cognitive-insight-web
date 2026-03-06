@@ -27,7 +27,24 @@ Day 1 Progress:
    - Cognitive Dashboard: Visually represented the emotions and sentiment using a dynamic progress bar.
    - Regex Processing: Made expressions to parse text to calculate words and sentence count.
 3. Greedy Quantifiers: 
-   Used Greedy Quantifiers in the Regex to ensure that the irregular punctuation and whitespaces don't get in the way of cognitive analysis metrics. 
+   Used Greedy Quantifiers in the Regex to ensure that the irregular punctuation and whitespaces don't get in the way of cognitive analysis metrics.
+
+## 🛠 Architecture Diagram:
+User Input
+     │
+     ▼
+Frontend (Next.js UI)
+     │
+     ▼
+API Layer (/api/analyze)
+     │
+     ▼
+AI Orchestration Layer
+     │
+ ┌───────────────┬───────────────┬───────────────┐
+ ▼               ▼               ▼
+HuggingFace   TensorFlow.js   CustomGPT/OpenAI
+ NLP Model      Local ML        AI Reasoning
    
  
 
