@@ -50,6 +50,7 @@ export default function TextAnalyser() {
 	const [result, setResult] = useState<AnalysisResult | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState("");
+	
 
 	const handleClearAll = () => {
 		setResult(null);
@@ -84,7 +85,8 @@ export default function TextAnalyser() {
 			setLoading(false);
 		}
 	};
-
+	
+		
 	return (
 		<div className="container mx-auto p-6 max-w-5xl">
 			<div className="flex flex-col md:flex-row gap-6 w-full">

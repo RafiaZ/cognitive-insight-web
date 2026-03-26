@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { analyzeText } from "@/lib/huggingface";
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,6 +25,8 @@ export async function POST(req: NextRequest) {
     const sentences = cleanText.split(/[.!?]+/).filter(s => s.trim().length > 0);
     const sentenceCount = sentences.length;
 
+    const aiData = await analyzeText(cleanText);
+
     // 3. Return Mock Analysis
     return NextResponse.json({
       success: true,
@@ -37,10 +40,10 @@ export async function POST(req: NextRequest) {
         },
         // Mock Cognitive/Emotional Data
         cognitiveInsight: {
-          sentiment: "Positive",
-          confidence: 0.85,
+          sentiment: aiData.sentiment.label,
+          confidence: aiData.sentiment.score,
           tone: "Analytical",
-          dominantEmotion: "Curiosity",
+          dominantEmotion: aiData.dominantEmotion,
         },
         emotions: [
           { label: "Joy", score: 0.72 },
