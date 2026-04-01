@@ -117,7 +117,7 @@ export default function TextAnalyser() {
 					className="w-fit px-8 py-3 bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:bg-gray-600 transition-colors"
 				>
 					{loading ? "Analyzing..." : "Analyze Text"}
-				</button>
+				</button> 
 				<button
 					className="px-6 py-3 border border-gray-500 text-gray-300 rounded-md hover:bg-gray-800 hover:text-white transition-all"
 					onClick={handleClearAll}
