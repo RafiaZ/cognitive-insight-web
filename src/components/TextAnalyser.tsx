@@ -50,7 +50,6 @@ export default function TextAnalyser() {
 	const [result, setResult] = useState<AnalysisResult | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState("");
-	
 
 	const handleClearAll = () => {
 		setResult(null);
@@ -73,7 +72,7 @@ export default function TextAnalyser() {
 			});
 
 			const data = await res.json();
-
+			console.log("Frontend received data:", data);
 			if (!res.ok) throw new Error(data.error || "Something went wrong");
 
 			setResult(data.analysis); // Store the analysis object
@@ -85,8 +84,7 @@ export default function TextAnalyser() {
 			setLoading(false);
 		}
 	};
-	
-		
+
 	return (
 		<div className="container mx-auto p-6 max-w-5xl">
 			<div className="flex flex-col md:flex-row gap-6 w-full">
@@ -117,7 +115,7 @@ export default function TextAnalyser() {
 					className="w-fit px-8 py-3 bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:bg-gray-600 transition-colors"
 				>
 					{loading ? "Analyzing..." : "Analyze Text"}
-				</button> 
+				</button>
 				<button
 					className="px-6 py-3 border border-gray-500 text-gray-300 rounded-md hover:bg-gray-800 hover:text-white transition-all"
 					onClick={handleClearAll}

@@ -17,10 +17,10 @@ const emotionResult = await hf.textClassification({
 });
 
 const emotionRate = [...emotionResult].sort((a,b)=> b.score - a.score)
-
+console.log("here is the emotion rate in hf.ts", emotionRate)
 return {
     sentiment:sentimentResult[0],
-    emotion: emotionResult,
+    emotion: emotionRate,
     dominantEmotion: emotionRate[0].label
 }
 }
