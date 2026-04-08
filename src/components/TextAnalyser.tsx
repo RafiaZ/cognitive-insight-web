@@ -1,22 +1,8 @@
 "use client";
 import React, { useState } from "react";
-
-// --- Types for our Analysis Response ---
-interface AnalysisResult {
-	stats: {
-		wordCount: number;
-		characterCount: number;
-		sentenceCount: number;
-		readingTimeMinutes: number;
-	};
-	cognitiveInsight: {
-		sentiment: string;
-		confidence: number;
-		tone: string;
-		dominantEmotion: string;
-	};
-	emotions: { label: string; score: number }[];
-}
+import { useStateTextAnalysis } from "@/hooks/useTextAnalysis";
+import { EmotionChart } from "./analysis/EmotionChart"
+import { StatsCard } from "./analysis/StatsCard";
 
 type TextBoxProps = {
 	label: string;
@@ -45,46 +31,15 @@ function TextBox({ label, readOnly, value, onChange }: TextBoxProps) {
 }
 
 export default function TextAnalyser() {
-	const [inputText, setInputText] = useState<string>("");
-	// Change result state to hold the structured object
-	const [result, setResult] = useState<AnalysisResult | null>(null);
-	const [loading, setLoading] = useState<boolean>(false);
-	const [error, setError] = useState("");
-
-	const handleClearAll = () => {
-		setResult(null);
-		setInputText("");
-	};
-	const handleTextAnalyser = async () => {
-		if (inputText.trim().length < 20) {
-			setError("Please enter at least 20 characters to analyze.");
-			return;
-		}
-
-		setError("");
-		setLoading(true);
-
-		try {
-			const res = await fetch("/api/analyze", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ text: inputText }),
-			});
-
-			const data = await res.json();
-			console.log("Frontend received data:", data);
-			if (!res.ok) throw new Error(data.error || "Something went wrong");
-
-			setResult(data.analysis); // Store the analysis object
-		} catch (err: any) {
-			setError(
-				err.message || "An error occurred while analyzing the text.",
-			);
-		} finally {
-			setLoading(false);
-		}
-	};
-
+	const {
+		inputText,
+		setInputText,
+		result,
+		loading,
+		error,
+		handleClearAll,
+		handleTextAnalyser,
+	} = useStateTextAnalysis();
 	return (
 		<div className="container mx-auto p-6 max-w-5xl">
 			<div className="flex flex-col md:flex-row gap-6 w-full">
@@ -130,44 +85,7 @@ export default function TextAnalyser() {
 			{result && (
 				<div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
 					{/* Stats Card */}
-					<div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-						<h3 className="text-amber-500 font-bold mb-4 uppercase text-sm tracking-widest">
-							Text Statistics
-						</h3>
-						<div className="grid grid-cols-2 gap-4 text-white">
-							<div className="p-3 bg-gray-900 rounded-lg">
-								<p className="text-gray-400 text-xs">Words</p>
-								<p className="text-2xl font-bold">
-									{result.stats.wordCount}
-								</p>
-							</div>
-							<div className="p-3 bg-gray-900 rounded-lg">
-								<p className="text-gray-400 text-xs">
-									Characters
-								</p>
-								<p className="text-2xl font-bold">
-									{result.stats.characterCount}
-								</p>
-							</div>
-							<div className="p-3 bg-gray-900 rounded-lg">
-								<p className="text-gray-400 text-xs">
-									Sentences
-								</p>
-								<p className="text-2xl font-bold">
-									{result.stats.sentenceCount}
-								</p>
-							</div>
-							<div className="p-3 bg-gray-900 rounded-lg">
-								<p className="text-gray-400 text-xs">
-									Reading Time
-								</p>
-								<p className="text-xl font-bold">
-									{result.stats.readingTimeMinutes} min
-								</p>
-							</div>
-						</div>
-					</div>
-
+					<StatsCard result={result}/>
 					{/* Cognitive Card */}
 					<div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
 						<h3 className="text-amber-500 font-bold mb-4 uppercase text-sm tracking-widest">
@@ -201,27 +119,14 @@ export default function TextAnalyser() {
 							</div>
 
 							<div className="pt-2">
-								<p className="text-gray-400 text-xs mb-2">
-									Emotion Breakdown
-								</p>
-								{result.emotions.map((emo) => (
-									<div
-										key={emo.label}
-										className="flex items-center gap-2 mb-2"
-									>
-										<span className="text-white text-xs w-16">
-											{emo.label}
-										</span>
-										<div className="flex-1 bg-gray-900 h-1.5 rounded-full">
-											<div
-												className="bg-blue-500 h-1.5 rounded-full"
-												style={{
-													width: `${emo.score * 100}%`,
-												}}
-											></div>
-										</div>
+								{result && (
+									<div>
+										{/* Move your Statistics Card to a component like EmotionChart */}
+										<EmotionChart
+											emotions={result.emotions}
+										/>
 									</div>
-								))}
+								)}
 							</div>
 						</div>
 					</div>
