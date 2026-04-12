@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 
 interface AnalysisResult {
 	stats: {
@@ -15,11 +15,12 @@ interface AnalysisResult {
 	};
 	emotions: { label: string; score: number }[];
 }
-export function  useStateTextAnalysis() {
-    const [inputText, setInputText] = useState<string>("");
+export function useStateTextAnalysis() {
+	const [inputText, setInputText] = useState<string>("");
 	const [result, setResult] = useState<AnalysisResult | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState("");
+	const abortControllerRef = useRef<AbortController | null>(null);
 
 	const handleClearAll = () => {
 		setResult(null);
@@ -30,7 +31,12 @@ export function  useStateTextAnalysis() {
 			setError("Please enter at least 20 characters to analyze.");
 			return;
 		}
+		if (abortControllerRef.current) {
+			abortControllerRef.current.abort();
+		}
 
+		const controller = new AbortController();
+		abortControllerRef.current = controller;
 		setError("");
 		setLoading(true);
 
@@ -42,7 +48,7 @@ export function  useStateTextAnalysis() {
 			});
 
 			const data = await res.json();
-			console.log(data)
+			console.log(data);
 			if (!res.ok) throw new Error(data.error || "Something went wrong");
 
 			setResult(data.analysis); // Store the analysis object
@@ -53,10 +59,14 @@ export function  useStateTextAnalysis() {
 		} finally {
 			setLoading(false);
 		}
-		
 	};
-return{
-    inputText, setInputText, result, loading, error, handleClearAll, handleTextAnalyser
-
-}
+	return {
+		inputText,
+		setInputText,
+		result,
+		loading,
+		error,
+		handleClearAll,
+		handleTextAnalyser,
+	};
 }

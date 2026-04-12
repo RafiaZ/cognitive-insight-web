@@ -49,7 +49,6 @@ export default function TextAnalyser() {
 					onChange={setInputText}
 				/>
 
-				{/* We can show a text summary in the second box */}
 				<TextBox
 					label="Text Summary"
 					readOnly={true}
