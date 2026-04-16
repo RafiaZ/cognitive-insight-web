@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 interface AnalysisResult {
 	stats: {
@@ -43,6 +43,7 @@ export function useStateTextAnalysis() {
 		try {
 			const res = await fetch("/api/analyze", {
 				method: "POST",
+				signal: controller.signal,
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ text: inputText }),
 			});
@@ -59,6 +60,14 @@ export function useStateTextAnalysis() {
 		} finally {
 			setLoading(false);
 		}
+
+		useEffect(() => {
+			return () => {
+				if (abortControllerRef.current) {
+					abortControllerRef.current.abort();
+				}
+			};
+		});
 	};
 	return {
 		inputText,

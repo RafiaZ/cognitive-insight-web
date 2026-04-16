@@ -65,7 +65,7 @@ export default function TextAnalyser() {
 
 				<button
 					onClick={handleTextAnalyser}
-					disabled={loading}
+					//disabled={loading}
 					className="w-fit px-8 py-3 bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:bg-gray-600 transition-colors"
 				>
 					{loading ? "Analyzing..." : "Analyze Text"}
