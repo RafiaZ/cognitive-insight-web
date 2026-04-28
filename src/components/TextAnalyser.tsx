@@ -1,8 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import { useStateTextAnalysis } from "@/hooks/useTextAnalysis";
-import { EmotionChart } from "./analysis/EmotionChart"
+import { EmotionChart } from "./analysis/EmotionChart";
 import { StatsCard } from "./analysis/StatsCard";
+import { SafetyIndicator } from "./analysis/SafetyIndicator";
 
 type TextBoxProps = {
 	label: string;
@@ -37,6 +38,8 @@ export default function TextAnalyser() {
 		result,
 		loading,
 		error,
+		isModelLoading,
+		isSafe,
 		handleClearAll,
 		handleTextAnalyser,
 	} = useStateTextAnalysis();
@@ -65,7 +68,7 @@ export default function TextAnalyser() {
 
 				<button
 					onClick={handleTextAnalyser}
-					//disabled={loading}
+					disabled={loading}
 					className="w-fit px-8 py-3 bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:bg-gray-600 transition-colors"
 				>
 					{loading ? "Analyzing..." : "Analyze Text"}
@@ -79,12 +82,12 @@ export default function TextAnalyser() {
 			</div>
 
 			{/* <div className="mt-6 flex flex-col gap-4"></div> */}
-
+			<SafetyIndicator isSafe={isSafe} loading={isModelLoading} />
 			{/* --- ANALYSIS DASHBOARD --- */}
 			{result && (
 				<div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
 					{/* Stats Card */}
-					<StatsCard result={result}/>
+					<StatsCard result={result} />
 					{/* Cognitive Card */}
 					<div className="bg-gray-800 p-6 rounded-xl border border-gray-700">
 						<h3 className="text-amber-500 font-bold mb-4 uppercase text-sm tracking-widest">
