@@ -10,7 +10,7 @@ export function SafetyIndicator({ isSafe, loading }: props) {
 
 	return (
 		<div
-			className={`text-xs font-bold px-2 py-1 rounded w-fit transition-all duration-300 ${
+			className={`text-xs font-bold px-2 py-3 rounded w-fit transition-all duration-300 ${
 				isSafe
 					? "text-green-400 bg-green-900/20 border border-green-800"
 					: "text-red-400 bg-red-900/20 border border-red-800 animate-shake"

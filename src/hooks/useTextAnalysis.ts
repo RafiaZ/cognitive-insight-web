@@ -24,16 +24,26 @@ export function useStateTextAnalysis() {
 	const [isModelLoading, setIsModelLoading] = useState(false);
 	const [isSafe, setIsSafe] = useState<boolean | null>(null);
 	const [error, setError] = useState("");
+	const [toxocityResult, setToxixityResult] = useState<
+		{ label: string; tscore: number }[]
+	>([]);
 	const modelRef = useRef<toxicity.ToxicityClassifier | null>(null);
 
 	const abortControllerRef = useRef<AbortController | null>(null);
-
+	const labels = [
+		"toxicity",
+		"severe_toxicity",
+		"identity_attack",
+		"insult",
+		"threat",
+		"sexual_explicit",
+	];
 	useEffect(() => {
 		async function initTF() {
 			if (modelRef.current) return;
 			setIsModelLoading(true);
 			try {
-				const model = await toxicity.load(0.85, []);
+				const model = await toxicity.load(0.6, labels);
 				modelRef.current = model;
 			} catch (err) {
 				console.error("TF loading Error", err);
@@ -49,20 +59,40 @@ export function useStateTextAnalysis() {
 			setIsSafe(null);
 			return;
 		}
-	});
+		const timer = setTimeout(async () => {
+			if (!modelRef.current) return;
 
-	const timer = setTimeout(async () => {
-		
-		if (!modelRef.current) return;
+			try {
+				const predictions = await modelRef.current.classify([
+					inputText,
+				]);
+				const toxicityDetail = predictions.map((p) => ({
+					label: p.label,
+					tscore: p.results[0].probabilities[1],
+				}));
+				setToxixityResult(toxicityDetail);
 
-		try {
-			const predictions = await modelRef.current.classify([inputText]);
-			const toxic = predictions.some((p) => p.results[0].match === true);
-			setIsSafe(!toxic);
-		} catch (err) {
-			console.error("TensorFlow classification failed:", err);
-		}
-	}, 500);
+				const toxic = predictions.some(
+					(p) => p.results[0].match === true,
+				);
+
+				setIsSafe(!toxic);
+				console.log(predictions);
+			} catch (err) {
+				console.error("TensorFlow classification failed:", err);
+			}
+		}, 500);
+		return () => clearTimeout(timer);
+	}, [inputText]);
+
+	// useEffect(() => {
+	// 	return () => {
+	// 		if (abortControllerRef.current) {
+	// 			abortControllerRef.current.abort();
+	// 		}
+	// 	};
+	// });
+
 	const handleClearAll = () => {
 		setResult(null);
 		setInputText("");
@@ -88,27 +118,28 @@ export function useStateTextAnalysis() {
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ text: inputText }),
 			});
-
 			const data = await res.json();
-			console.log(data);
-			if (!res.ok) throw new Error(data.error || "Something went wrong");
+			console.log("Full API Response:", data); 
 
-			setResult(data.analysis);
+			if (!res.ok) throw new Error(data.error || "Analysis failed");
+			if (data.analysis) {
+				setResult(data.analysis);
+			} else {
+				setResult(data);
+			}
 		} catch (err: any) {
-			setError(
-				err.message || "An error occurred while analyzing the text.",
-			);
-		} finally {
-			setLoading(false);
-		}
+			if (err.name === "AbortError") {
+				console.log("Api fetch aborted");
+				return;
+			}
 
-		useEffect(() => {
-			return () => {
-				if (abortControllerRef.current) {
-					abortControllerRef.current.abort();
-				}
-			};
-		});
+			setError(err.message || "An error occurred");
+		} finally {
+			if (controller === abortControllerRef.current) {
+				setLoading(false);
+				abortControllerRef.current = null;
+			}
+		}
 	};
 	return {
 		inputText,
@@ -120,5 +151,6 @@ export function useStateTextAnalysis() {
 		error,
 		handleClearAll,
 		handleTextAnalyser,
+		toxocityResult,
 	};
 }

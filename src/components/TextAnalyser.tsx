@@ -42,6 +42,7 @@ export default function TextAnalyser() {
 		isSafe,
 		handleClearAll,
 		handleTextAnalyser,
+		toxocityResult: toxicityResults
 	} = useStateTextAnalysis();
 	return (
 		<div className="container mx-auto p-6 max-w-5xl">
@@ -82,7 +83,39 @@ export default function TextAnalyser() {
 			</div>
 
 			{/* <div className="mt-6 flex flex-col gap-4"></div> */}
-			<SafetyIndicator isSafe={isSafe} loading={isModelLoading} />
+			<div className="mt-5">
+				<SafetyIndicator isSafe={isSafe} loading={isModelLoading} />
+			</div>
+			<div>
+				{/* toxicity results */}
+				{/* <div className="mt-4 grid grid-cols-1 gap-2">
+					{toxicityResults.map((res) => (
+						<div
+							key={res.label}
+							className="bg-gray-800 p-3 rounded-md border border-gray-700"
+						>
+							<div className="flex justify-between text-sm mb-1">
+								<span className="text-gray-300 capitalize">
+									{res.label.replace("_", " ")}
+								</span>
+								<span
+									className={`${res.tscore > 0.5 ? "text-red-400" : "text-green-400"} font-mono`}
+								>
+									{(res.tscore * 100).toFixed(1)}%
+								</span>
+							</div>
+
+							
+							<div className="w-full bg-gray-900 h-1.5 rounded-full overflow-hidden">
+								<div
+									className={`h-full transition-all duration-500 ${res.tscore > 0.5 ? "bg-red-500" : "bg-blue-500"}`}
+									style={{ width: `${res.tscore * 100}%` }}
+								/>
+							</div>
+						</div>
+					))}
+				</div> */}
+			</div>
 			{/* --- ANALYSIS DASHBOARD --- */}
 			{result && (
 				<div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in duration-500">
