@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
 					dominantEmotion: aiData.dominantEmotion,
 				},
 				emotions: aiData.emotion.map((emo: any) => ({
+					
 					label: emo.label,
 					score: emo.score,
 				})),

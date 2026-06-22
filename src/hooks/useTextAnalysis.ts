@@ -89,6 +89,7 @@ export function useStateTextAnalysis() {
 	// 	return () => {
 	// 		if (abortControllerRef.current) {
 	// 			abortControllerRef.current.abort();
+	
 	// 		}
 	// 	};
 	// });
